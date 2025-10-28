@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CEO Profile | Alexander Vance</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#1e293b',
+                        accent: '#6366f1',
+                        dark: '#0f172a',
+                        light: '#f8fafc',
+                        'dark-card': '#1e293b',
+                        'dark-border': '#334155'
+                    },
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 1s ease-in-out',
+                        'slide-up': 'slideUp 0.8s ease-out',
+                        'slide-in-left': 'slideInLeft 0.8s ease-out',
+                        'slide-in-right': 'slideInRight 0.8s ease-out',
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s ease-in-out infinite',
+                        'typewriter': 'typewriter 3s steps(40) 1s forwards, blink 0.75s step-end infinite',
+                        'bounce-slow': 'bounce 3s infinite',
+                        'gradient': 'gradient 8s ease infinite',
+                        'glow': 'glow 2s ease-in-out infinite alternate'
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(30px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        slideInLeft: {
+                            '0%': { transform: 'translateX(-30px)', opacity: '0' },
+                            '100%': { transform: 'translateX(0)', opacity: '1' },
+                        },
+                        slideInRight: {
+                            '0%': { transform: 'translateX(30px)', opacity: '0' },
+                            '100%': { transform: 'translateX(0)', opacity: '1' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-15px)' },
+                        },
+                        typewriter: {
+                            '0%': { width: '0' },
+                            '100%': { width: '100%' }
+                        },
+                        blink: {
+                            '0%, 100%': { 'border-color': 'transparent' },
+                            '50%': { 'border-color': 'white' }
+                        },
+                        gradient: {
+                            '0%, 100%': { 'background-position': '0% 50%' },
+                            '50%': { 'background-position': '100% 50%' }
+                        },
+                        glow: {
+                            '0%': { 'box-shadow': '0 0 5px rgba(59, 130, 246, 0.5)' },
+                            '100%': { 'box-shadow': '0 0 20px rgba(59, 130, 246, 0.8)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        .gradient-bg {
+            background: linear-gradient(-45deg, #0f172a, #1e293b, #1e40af, #3b82f6);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+        }
+        .dark-gradient {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #1e40af 100%);
+        }
+        .glass-effect {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .card-hover {
+            transition: all 0.4s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+        .text-gradient {
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .floating-shapes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+        .shape {
+            position: absolute;
+            opacity: 0.1;
+            border-radius: 50%;
+            background: white;
+        }
+        .typewriter-container {
+            overflow: hidden;
+            border-right: 3px solid white;
+            white-space: nowrap;
+            margin: 0 auto;
+            width: 0;
+        }
+        .stats-counter {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #3b82f6;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent, #3b82f6, transparent);
+        }
+        .flip-card {
+            perspective: 1000px;
+        }
+        .flip-card-inner {
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+        }
+        .flip-card:hover .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        .flip-card-front, .flip-card-back {
+            backface-visibility: hidden;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .flip-card-back {
+            transform: rotateY(180deg);
+        }
+        .particles-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+        .dark-mode-toggle {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: #1e293b;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .dark-mode-toggle::after {
+            content: '';
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background: #3b82f6;
+            border-radius: 50%;
+            top: 3px;
+            left: 3px;
+            transition: all 0.3s ease;
+        }
+        .dark-mode-toggle.active::after {
+            transform: translateX(30px);
+        }
+        .skill-bar {
+            height: 8px;
+            background: #334155;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+        .skill-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6, #6366f1);
+            border-radius: 4px;
+            width: 0;
+            transition: width 1.5s ease-in-out;
+        }
+        .testimonial-carousel {
+            overflow: hidden;
+            position: relative;
+        }
+        .testimonial-track {
+            display: flex;
+            transition: transform 0.5s ease;
+        }
+        .testimonial-slide {
+            min-width: 100%;
+        }
+        .nav-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #334155;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .nav-dot.active {
+            background: #3b82f6;
+            transform: scale(1.2);
+        }
+    </style>
+</head>
+<body class="bg-dark text-light font-inter dark">
+    <!-- Navigation -->
+    <nav class="fixed w-full py-4 z-50 transition-all duration-300 glass-effect">
+        <div class="container mx-auto px-6 flex justify-between items-center">
+            <div class="text-2xl font-bold text-primary">A.V.</div>
+            <div class="hidden md:flex space-x-8">
+                <a href="#about" class="text-gray-300 hover:text-primary transition-colors duration-300 relative group">
+                    About
+                    <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
+                </a>
+                <a href="#experience" class="text-gray-300 hover:text-primary transition-colors duration-300 relative group">
+                    Experience
+                    <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
+                </a>
+                <a href="#skills" class="text-gray-300 hover:text-primary transition-colors duration-300 relative group">
+                    Skills
+                    <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
+                </a>
+                <a href="#philosophy" class="text-gray-300 hover:text-primary transition-colors duration-300 relative group">
+                    Philosophy
+                    <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
+                </a>
+                <a href="#testimonials" class="text-gray-300 hover:text-primary transition-colors duration-300 relative group">
+                    Testimonials
+                    <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
+                </a>
+                <a href="#contact" class="text-gray-300 hover:text-primary transition-colors duration-300 relative group">
+                    Contact
+                    <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
+                </a>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div class="dark-mode-toggle active" id="darkModeToggle">
+                    <i class="fas fa-moon absolute left-2 top-2 text-xs text-white z-10"></i>
+                    <i class="fas fa-sun absolute right-2 top-2 text-xs text-white z-10"></i>
+                </div>
+                <button class="md:hidden text-gray-300">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="gradient-bg text-white pt-32 pb-20 md:pt-40 md:pb-32 relative overflow-hidden">
+        <div class="particles-container" id="particles-js"></div>
+        <div class="floating-shapes">
+            <div class="shape w-20 h-20 top-1/4 left-10 animate-float" style="animation-delay: 0s;"></div>
+            <div class="shape w-12 h-12 top-1/3 right-20 animate-float" style="animation-delay: 1s;"></div>
+            <div class="shape w-16 h-16 bottom-1/4 left-1/4 animate-float" style="animation-delay: 2s;"></div>
+            <div class="shape w-10 h-10 bottom-1/3 right-1/3 animate-float" style="animation-delay: 3s;"></div>
+            <div class="shape w-14 h-14 top-2/3 right-10 animate-float" style="animation-delay: 4s;"></div>
+        </div>
+        
+        <div class="container mx-auto px-6 flex flex-col md:flex-row items-center relative z-10">
+            <div class="md:w-1/2 mb-10 md:mb-0">
+                <h1 class="text-5xl md:text-6xl font-bold mb-4 animate-slide-up">Alexander Vance</h1>
+                <div class="typewriter-container text-xl mb-6 opacity-90 animate-typewriter">CEO of Nexus Innovations</div>
+                <p class="text-lg mb-8 max-w-md animate-slide-up" style="animation-delay: 0.4s;">Visionary leader transforming industries through technology innovation and strategic growth.</p>
+                <div class="flex space-x-4 animate-slide-up" style="animation-delay: 0.6s;">
+                    <a href="#contact" class="bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-600 transition-all duration-300 transform hover:-translate-y-1 shadow-lg animate-glow">Get in Touch</a>
+                    <a href="#about" class="glass-effect text-white px-6 py-3 rounded-lg font-medium hover:bg-white hover:bg-opacity-10 transition-all duration-300 transform hover:-translate-y-1">View Portfolio</a>
+                </div>
+            </div>
+            <div class="md:w-1/2 flex justify-center animate-float">
+                <div class="relative w-72 h-72 md:w-96 md:h-96">
+                    <div class="absolute inset-0 bg-gradient-to-r from-primary to-accent rounded-full animate-pulse-slow"></div>
+                    <div class="absolute inset-4 bg-dark-card rounded-full overflow-hidden border-4 border-dark-border shadow-2xl">
+                        <div class="w-full h-full flex items-center justify-center bg-gray-800">
+                            <i class="fas fa-user-tie text-gray-600 text-8xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce-slow">
+            <a href="#about" class="text-white text-2xl">
+                <i class="fas fa-chevron-down"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="py-16 bg-dark-card">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                <div class="animate-slide-up" style="animation-delay: 0.1s;">
+                    <div class="stats-counter" data-count="18">0</div>
+                    <p class="text-gray-400">Years Experience</p>
+                </div>
+                <div class="animate-slide-up" style="animation-delay: 0.2s;">
+                    <div class="stats-counter" data-count="75">0</div>
+                    <p class="text-gray-400">Projects Delivered</p>
+                </div>
+                <div class="animate-slide-up" style="animation-delay: 0.3s;">
+                    <div class="stats-counter" data-count="24">0</div>
+                    <p class="text-gray-400">Industry Awards</p>
+                </div>
+                <div class="animate-slide-up" style="animation-delay: 0.4s;">
+                    <div class="stats-counter" data-count="500">0</div>
+                    <p class="text-gray-400">Team Members</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 bg-dark">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center text-white mb-4">About Me</h2>
+            <div class="w-24 h-1 bg-primary mx-auto mb-12"></div>
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="md:w-2/5 mb-10 md:mb-0 flex justify-center animate-slide-in-left">
+                    <div class="relative">
+                        <div class="w-64 h-64 md:w-80 md:h-80 bg-gradient-to-br from-primary to-accent rounded-2xl overflow-hidden shadow-2xl transform rotate-3">
+                            <div class="w-full h-full flex items-center justify-center bg-dark-card">
+                                <i class="fas fa-user-tie text-gray-600 text-7xl"></i>
+                            </div>
+                        </div>
+                        <div class="absolute -bottom-6 -right-6 w-32 h-32 bg-primary rounded-2xl -z-10"></div>
+                    </div>
+                </div>
+                <div class="md:w-3/5 md:pl-12 animate-slide-in-right">
+                    <p class="text-lg text-gray-300 mb-6">As the CEO of Nexus Innovations, I lead a global team of visionaries dedicated to pushing the boundaries of technology and creating solutions that shape the future.</p>
+                    <p class="text-lg text-gray-300 mb-6">With a background in engineering and business strategy, I've spent my career at the forefront of digital transformation, helping organizations navigate complex challenges and unlock new opportunities.</p>
+                    <div class="flex flex-wrap gap-4 mb-8">
+                        <div class="bg-dark-card text-primary px-4 py-2 rounded-full font-medium shadow-md card-hover border border-dark-border">Strategic Leadership</div>
+                        <div class="bg-dark-card text-primary px-4 py-2 rounded-full font-medium shadow-md card-hover border border-dark-border">Digital Transformation</div>
+                        <div class="bg-dark-card text-primary px-4 py-2 rounded-full font-medium shadow-md card-hover border border-dark-border">Innovation</div>
+                        <div class="bg-dark-card text-primary px-4 py-2 rounded-full font-medium shadow-md card-hover border border-dark-border">Global Expansion</div>
+                    </div>
+                    <a href="#" class="inline-flex items-center text-primary font-medium group">
+                        Download Resume
+                        <i class="fas fa-arrow-down ml-2 transform group-hover:translate-y-1 transition-transform"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="py-20 bg-dark-card">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center text-white mb-4">Core Competencies</h2>
+            <div class="w-24 h-1 bg-primary mx-auto mb-12"></div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <div class="animate-slide-up">
+                    <div class="flex justify-between mb-2">
+                        <span class="text-gray-300">Strategic Planning</span>
+                        <span class="text-primary">95%</span>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-progress" data-width="95"></div>
+                    </div>
+                </div>
+                <div class="animate-slide-up" style="animation-delay: 0.1s;">
+                    <div class="flex justify-between mb-2">
+                        <span class="text-gray-300">Leadership</span>
+                        <span class="text-primary">92%</span>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-progress" data-width="92"></div>
+                    </div>
+                </div>
+                <div class="animate-slide-up" style="animation-delay: 0.2s;">
+                    <div class="flex justify-between mb-2">
+                        <span class="text-gray-300">Innovation</span>
+                        <span class="text-primary">88%</span>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-progress" data-width="88"></div>
+                    </div>
+                </div>
+                <div class="animate-slide-up" style="animation-delay: 0.3s;">
+                    <div class="flex justify-between mb-2">
+                        <span class="text-gray-300">Financial Acumen</span>
+                        <span class="text-primary">90%</span>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-progress" data-width="90"></div>
+                    </div>
+                </div>
+                <div class="animate-slide-up" style="animation-delay: 0.4s;">
+                    <div class="flex justify-between mb-2">
+                        <span class="text-gray-300">Team Building</span>
+                        <span class="text-primary">94%</span>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-progress" data-width="94"></div>
+                    </div>
+                </div>
+                <div class="animate-slide-up" style="animation-delay: 0.5s;">
+                    <div class="flex justify-between mb-2">
+                        <span class="text-gray-300">Public Speaking</span>
+                        <span class="text-primary">85%</span>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-progress" data-width="85"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Experience Section -->
+    <section id="experience" class="py-20 bg-dark">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center text-white mb-4">Professional Journey</h2>
+            <div class="w-24 h-1 bg-primary mx-auto mb-12"></div>
+            <div class="max-w-4xl mx-auto relative timeline">
+                <!-- Timeline items -->
+                <div class="space-y-12">
+                    <!-- Item 1 -->
+                    <div class="relative flex flex-col md:flex-row items-center">
+                        <div class="flex-1 md:text-right md:pr-12 mb-4 md:mb-0 order-2 md:order-1 animate-slide-in-left">
+                            <h3 class="text-xl font-bold text-white">CEO & Founder</h3>
+                            <p class="text-primary font-medium">Nexus Innovations</p>
+                            <p class="text-gray-400">2018 - Present</p>
+                        </div>
+                        <div class="w-6 h-6 rounded-full bg-primary z-10 order-1 md:order-2 mb-4 md:mb-0 shadow-lg"></div>
+                        <div class="flex-1 md:pl-12 order-3 animate-slide-in-right">
+                            <p class="text-gray-300">Founded and scaled a global technology company from startup to industry leader with presence in 12 countries.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Item 2 -->
+                    <div class="relative flex flex-col md:flex-row items-center">
+                        <div class="flex-1 md:text-right md:pr-12 mb-4 md:mb-0 order-2 md:order-1 animate-slide-in-left">
+                            <h3 class="text-xl font-bold text-white">Chief Technology Officer</h3>
+                            <p class="text-primary font-medium">TechSphere Global</p>
+                            <p class="text-gray-400">2012 - 2018</p>
+                        </div>
+                        <div class="w-6 h-6 rounded-full bg-primary z-10 order-1 md:order-2 mb-4 md:mb-0 shadow-lg"></div>
+                        <div class="flex-1 md:pl-12 order-3 animate-slide-in-right">
+                            <p class="text-gray-300">Led digital transformation initiatives across the organization, resulting in 45% increase in operational efficiency.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Item 3 -->
+                    <div class="relative flex flex-col md:flex-row items-center">
+                        <div class="flex-1 md:text-right md:pr-12 mb-4 md:mb-0 order-2 md:order-1 animate-slide-in-left">
+                            <h3 class="text-xl font-bold text-white">Senior Product Director</h3>
+                            <p class="text-primary font-medium">Innovate Solutions</p>
+                            <p class="text-gray-400">2007 - 2012</p>
+                        </div>
+                        <div class="w-6 h-6 rounded-full bg-primary z-10 order-1 md:order-2 mb-4 md:mb-0 shadow-lg"></div>
+                        <div class="flex-1 md:pl-12 order-3 animate-slide-in-right">
+                            <p class="text-gray-300">Directed product strategy and development for enterprise software solutions used by Fortune 500 companies.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Philosophy Section -->
+    <section id="philosophy" class="py-20 bg-dark-card">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center text-white mb-4">Leadership Philosophy</h2>
+            <div class="w-24 h-1 bg-primary mx-auto mb-12"></div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <div class="flip-card h-80">
+                    <div class="flip-card-inner h-full">
+                        <div class="flip-card-front bg-dark border border-dark-border p-8 rounded-xl shadow-lg card-hover flex flex-col items-center justify-center h-full">
+                            <div class="w-20 h-20 bg-primary bg-opacity-10 rounded-full flex items-center justify-center text-primary text-3xl mb-6">
+                                <i class="fas fa-lightbulb"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-white mb-4">Vision</h3>
+                            <p class="text-gray-400 text-center">Click to learn more</p>
+                        </div>
+                        <div class="flip-card-back bg-primary text-white p-8 rounded-xl shadow-lg flex flex-col items-center justify-center h-full">
+                            <h3 class="text-2xl font-bold mb-4">Vision</h3>
+                            <p class="text-center">Creating a clear and compelling vision that inspires teams to achieve extraordinary results.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flip-card h-80">
+                    <div class="flip-card-inner h-full">
+                        <div class="flip-card-front bg-dark border border-dark-border p-8 rounded-xl shadow-lg card-hover flex flex-col items-center justify-center h-full">
+                            <div class="w-20 h-20 bg-primary bg-opacity-10 rounded-full flex items-center justify-center text-primary text-3xl mb-6">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-white mb-4">Empowerment</h3>
+                            <p class="text-gray-400 text-center">Click to learn more</p>
+                        </div>
+                        <div class="flip-card-back bg-primary text-white p-8 rounded-xl shadow-lg flex flex-col items-center justify-center h-full">
+                            <h3 class="text-2xl font-bold mb-4">Empowerment</h3>
+                            <p class="text-center">Building strong teams by empowering individuals with autonomy, trust, and resources to excel.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flip-card h-80">
+                    <div class="flip-card-inner h-full">
+                        <div class="flip-card-front bg-dark border border-dark-border p-8 rounded-xl shadow-lg card-hover flex flex-col items-center justify-center h-full">
+                            <div class="w-20 h-20 bg-primary bg-opacity-10 rounded-full flex items-center justify-center text-primary text-3xl mb-6">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-white mb-4">Growth</h3>
+                            <p class="text-gray-400 text-center">Click to learn more</p>
+                        </div>
+                        <div class="flip-card-back bg-primary text-white p-8 rounded-xl shadow-lg flex flex-col items-center justify-center h-full">
+                            <h3 class="text-2xl font-bold mb-4">Growth</h3>
+                            <p class="text-center">Fostering continuous learning and development to drive personal and organizational growth.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="py-20 bg-dark">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center text-white mb-4">Testimonials</h2>
+            <div class="w-24 h-1 bg-primary mx-auto mb-12"></div>
+            <div class="testimonial-carousel max-w-4xl mx-auto">
+                <div class="testimonial-track" id="testimonialTrack">
+                    <div class="testimonial-slide p-8">
+                        <div class="bg-dark-card border border-dark-border rounded-2xl p-8 shadow-lg">
+                            <div class="flex items-center mb-6">
+                                <div class="w-16 h-16 bg-primary rounded-full flex items-center justify-center text-white text-xl font-bold mr-4">JS</div>
+                                <div>
+                                    <h4 class="text-white font-bold">Jessica Smith</h4>
+                                    <p class="text-gray-400">Board Member, TechGlobal</p>
+                                </div>
+                            </div>
+                            <p class="text-gray-300 italic">"Alexander's visionary leadership transformed our company's trajectory. His strategic insights and ability to execute complex initiatives are unparalleled in the industry."</p>
+                        </div>
+                    </div>
+                    <div class="testimonial-slide p-8">
+                        <div class="bg-dark-card border border-dark-border rounded-2xl p-8 shadow-lg">
+                            <div class="flex items-center mb-6">
+                                <div class="w-16 h-16 bg-accent rounded-full flex items-center justify-center text-white text-xl font-bold mr-4">MR</div>
+                                <div>
+                                    <h4 class="text-white font-bold">Michael Rodriguez</h4>
+                                    <p class="text-gray-400">CEO, FutureTech</p>
+                                </div>
+                            </div>
+                            <p class="text-gray-300 italic">"Working with Alexander was a game-changer for our organization. His innovative approach to problem-solving and team leadership delivered results beyond our expectations."</p>
+                        </div>
+                    </div>
+                    <div class="testimonial-slide p-8">
+                        <div class="bg-dark-card border border-dark-border rounded-2xl p-8 shadow-lg">
+                            <div class="flex items-center mb-6">
+                                <div class="w-16 h-16 bg-primary rounded-full flex items-center justify-center text-white text-xl font-bold mr-4">SD</div>
+                                <div>
+                                    <h4 class="text-white font-bold">Sarah Johnson</h4>
+                                    <p class="text-gray-400">VP Innovation, NextGen Solutions</p>
+                                </div>
+                            </div>
+                            <p class="text-gray-300 italic">"Alexander's ability to identify market trends and capitalize on emerging opportunities is remarkable. He built a culture of excellence that continues to drive success."</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-center mt-8 space-x-2">
+                    <div class="nav-dot active" data-slide="0"></div>
+                    <div class="nav-dot" data-slide="1"></div>
+                    <div class="nav-dot" data-slide="2"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 dark-gradient text-white relative overflow-hidden">
+        <div class="floating-shapes">
+            <div class="shape w-16 h-16 top-20 left-10 animate-float" style="animation-delay: 0s;"></div>
+            <div class="shape w-10 h-10 top-40 right-20 animate-float" style="animation-delay: 1s;"></div>
+            <div class="shape w-12 h-12 bottom-40 left-1/4 animate-float" style="animation-delay: 2s;"></div>
+        </div>
+        
+        <div class="container mx-auto px-6 relative z-10">
+            <h2 class="text-4xl font-bold text-center mb-4">Get in Touch</h2>
+            <div class="w-24 h-1 bg-white mx-auto mb-12"></div>
+            <div class="max-w-2xl mx-auto glass-effect rounded-2xl p-8 shadow-2xl">
+                <form class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="name" class="block mb-2">Your Name</label>
+                            <input type="text" id="name" class="w-full px-4 py-3 rounded-lg glass-effect border border-white border-opacity-30 focus:outline-none focus:ring-2 focus:ring-white transition-all">
+                        </div>
+                        <div>
+                            <label for="email" class="block mb-2">Your Email</label>
+                            <input type="email" id="email" class="w-full px-4 py-3 rounded-lg glass-effect border border-white border-opacity-30 focus:outline-none focus:ring-2 focus:ring-white transition-all">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="subject" class="block mb-2">Subject</label>
+                        <input type="text" id="subject" class="w-full px-4 py-3 rounded-lg glass-effect border border-white border-opacity-30 focus:outline-none focus:ring-2 focus:ring-white transition-all">
+                    </div>
+                    <div>
+                        <label for="message" class="block mb-2">Message</label>
+                        <textarea id="message" rows="4" class="w-full px-4 py-3 rounded-lg glass-effect border border-white border-opacity-30 focus:outline-none focus:ring-2 focus:ring-white transition-all"></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-primary text-white py-3 rounded-lg font-medium hover:bg-blue-600 transition-all duration-300 transform hover:-translate-y-1 shadow-lg">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark-card text-white py-12">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-8">
+                <div class="mb-6 md:mb-0">
+                    <p class="text-2xl font-bold">Alexander Vance</p>
+                    <p class="text-gray-400">CEO, Nexus Innovations</p>
+                </div>
+                <div class="flex space-x-6">
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors duration-300 transform hover:-translate-y-1">
+                        <i class="fab fa-linkedin-in text-2xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors duration-300 transform hover:-translate-y-1">
+                        <i class="fab fa-twitter text-2xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors duration-300 transform hover:-translate-y-1">
+                        <i class="fab fa-instagram text-2xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors duration-300 transform hover:-translate-y-1">
+                        <i class="fab fa-medium text-2xl"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 pt-8 text-center text-gray-400">
+                <p>&copy; 2023 Alexander Vance. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Navbar background on scroll
+        window.addEventListener('scroll', function() {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.classList.add('shadow-md');
+            } else {
+                nav.classList.remove('shadow-md');
+            }
+        });
+
+        // Counter animation
+        function animateCounters() {
+            const counters = document.querySelectorAll('.stats-counter');
+            counters.forEach(counter => {
+                const target = +counter.getAttribute('data-count');
+                const duration = 2000;
+                const step = target / (duration / 16);
+                let current = 0;
+                
+                const updateCounter = () => {
+                    current += step;
+                    if (current < target) {
+                        counter.textContent = Math.floor(current);
+                        requestAnimationFrame(updateCounter);
+                    } else {
+                        counter.textContent = target;
+                    }
+                };
+                
+                updateCounter();
+            });
+        }
+
+        // Skill bar animation
+        function animateSkillBars() {
+            const skillBars = document.querySelectorAll('.skill-progress');
+            skillBars.forEach(bar => {
+                const width = bar.getAttribute('data-width');
+                bar.style.width = `${width}%`;
+            });
+        }
+
+        // Testimonial carousel
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.testimonial-slide');
+        const track = document.getElementById('testimonialTrack');
+        const dots = document.querySelectorAll('.nav-dot');
+        
+        function goToSlide(slideIndex) {
+            currentSlide = slideIndex;
+            track.style.transform = `translateX(-${currentSlide * 100}%)`;
+            
+            dots.forEach((dot, index) => {
+                if (index === currentSlide) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+        }
+        
+        dots.forEach(dot => {
+            dot.addEventListener('click', function() {
+                const slideIndex = parseInt(this.getAttribute('data-slide'));
+                goToSlide(slideIndex);
+            });
+        });
+
+        // Auto-advance testimonials
+        setInterval(() => {
+            currentSlide = (currentSlide + 1) % slides.length;
+            goToSlide(currentSlide);
+        }, 5000);
+
+        // Dark mode toggle
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        darkModeToggle.addEventListener('click', function() {
+            this.classList.toggle('active');
+            document.body.classList.toggle('dark');
+        });
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    if (entry.target.classList.contains('stats-counter')) {
+                        animateCounters();
+                    } else if (entry.target.classList.contains('skill-progress')) {
+                        animateSkillBars();
+                    } else {
+                        entry.target.style.animationPlayState = 'running';
+                    }
+                }
+            });
+        }, observerOptions);
+
+        // Observe elements for animation
+        document.querySelectorAll('.animate-slide-up, .animate-slide-in-left, .animate-slide-in-right, .stats-counter, .skill-progress').forEach(el => {
+            el.style.animationPlayState = 'paused';
+            observer.observe(el);
+        });
+
+        // Initialize GSAP animations
+        gsap.registerPlugin(ScrollTrigger);
+        
+        // Animate elements on scroll with GSAP
+        gsap.utils.toArray('.card-hover').forEach(card => {
+            gsap.fromTo(card, {
+                y: 50,
+                opacity: 0
+            }, {
+                y: 0,
+                opacity: 1,
+                duration: 0.8,
+                scrollTrigger: {
+                    trigger: card,
+                    start: "top 80%",
+                    end: "bottom 20%",
+                    toggleActions: "play none none reverse"
+                }
+            });
+        });
+
+        // Simple particle effect
+        function initParticles() {
+            const container = document.getElementById('particles-js');
+            const count = 50;
+            
+            for (let i = 0; i < count; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('shape');
+                particle.style.width = `${Math.random() * 10 + 5}px`;
+                particle.style.height = particle.style.width;
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                particle.style.animationDelay = `${Math.random() * 5}s`;
+                container.appendChild(particle);
+            }
+        }
+
+        // Initialize particles
+        initParticles();
+    </script>
+</body>
+</html>
